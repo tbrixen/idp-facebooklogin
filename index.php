@@ -52,8 +52,6 @@ if ( isset($session) ) {
     // Create a session using the saved token
     $session = new FacebookSession($session->getToken());
 
-    $logoutURL = $helper->getLogoutUrl( $session, 'http://localhost/idp-facebooklogin/logout.php');
-
 
     // Get the user object
     try {
@@ -82,7 +80,7 @@ if ( isset($session) ) {
         echo "Sorry. To access this page, you need to be both male and originate from denmark";
     }
           
-    echo '<br /><br /><a href="' . $logoutURL . '">Log out</a>';
+    echo '<br /><br /><a href="logout.php">Log out</a>';
 
 } else {
     // There were no session
