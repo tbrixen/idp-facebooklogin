@@ -1,4 +1,6 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 session_start();
 
 
@@ -52,7 +54,35 @@ if ( isset($session) ) {
 
     $logoutURL = $helper->getLogoutUrl( $session, 'http://localhost/idp-facebooklogin/logout.php');
 
-    echo '<a href="' . $logoutURL . '">Log out</a>';
+
+    // Get the user object
+    try {
+        // Get user profile
+        $user_profile = (new FacebookRequest(
+            $session, 'GET', '/me'
+        ))->execute()->getGraphObject(GraphUser::className());
+    } catch(FacebookRequestException $e) {
+
+        echo "Exception occured, code: " . $e->getCode();
+        echo " with message: " . $e->getMessage();
+    }   
+
+    // Retreive the info
+    $gender = $user_profile->getProperty('gender');
+    $locale = $user_profile->getProperty('locale');
+
+    echo "Hello " . $user_profile->getName() . "<br />";
+    echo "You are a " . $gender. " with locale ";
+    echo "locale: " . $locale . "<br />";
+
+
+    if ($gender == "male" && $locale == "da_DK"){
+        echo "You are male and from Denmark. You have access to this page";
+    } else {
+        echo "Sorry. To access this page, you need to be both male and originate from denmark";
+    }
+          
+    echo '<br /><br /><a href="' . $logoutURL . '">Log out</a>';
 
 } else {
     // There were no session
@@ -60,26 +90,6 @@ if ( isset($session) ) {
     echo '<a href="' . $helper->getLoginUrl() . '">Login with Facebook</a>';
 }
 
-//    try {
-//        $user_profile = (new FacebookRequest(
-//            $session, 'GET', '/me'
-//        ))->execute()->getGraphObject(GraphUser::className());
-//
-//        echo "Name: " . $user_profile->getName();
-//
-//          
-//
-//        echo print_r($user_profile, 1);
-//
-//    } catch(FacebookRequestException $e) {
-//
-//        echo "Exception occured, code: " . $e->getCode();
-//        echo " with message: " . $e->getMessage();
-//
-//    }   
-//
-//} else {
-//}
 
 
 ?>
